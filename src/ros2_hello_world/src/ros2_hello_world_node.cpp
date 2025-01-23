@@ -2,7 +2,7 @@
 
 class HelloWorldNode : public rclcpp::Node {
 public:
-    HelloWorldNode() : Node("hello_world_node") {
+    HelloWorldNode() : Node("ros2_hello_world_node") {
         RCLCPP_INFO(this->get_logger(), "Hello, World! from an installed ros package");
     }
 };

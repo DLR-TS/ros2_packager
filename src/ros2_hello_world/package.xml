@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>hello_world</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <name>ros2_hello_world</name>
+  <version>1.0.0</version>
+  <description>A simple hello world node for ROS 2: run with `ros2 run ros2_hello_world ros2_hello_world_node`</description>
   <maintainer email="rosuser@todo.todo">rosuser</maintainer>
   <license>TODO: License declaration</license>
 
