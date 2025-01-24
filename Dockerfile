@@ -39,27 +39,21 @@ RUN useradd --create-home ${USER}
 RUN cat /etc/passwd && usermod -u ${UID} ${USER} && groupmod -g ${GID} ${USER}
 RUN chown -R ${UID}:${GID} /home/${USER} || true
 
+WORKDIR /ros2_ws
+COPY src src
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt-get update && \
-    find /ros2_ws/src -name 'requirements.system' -type f | while read -r file; do \
+    find . -name 'requirements.system' -type f | while read -r file; do \
+        echo $file; \
         apt-get install --no-install-recommends -y $(sed '/^#/d' "$file" | sed '/^$/d'); \
     done && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && rm -rf src
 
 
 USER rosuser
 WORKDIR /ros2_ws
-
-#ENV ROSDEP_SOURCES_LIST=/ros2_ws/.ros/rosdep/sources.list.d
-#ENV ROSDEP_YAML_CACHE=/ros2_ws/.ros/rosdep/rosdep.yaml
-#ENV ROS_INDEX_DIR=/ros2_ws/.ros
-#ENV ROSDEP_CACHE=/ros2_ws/.ros/rosdep_cache
-#ENV ROSDEP_SOURCE_PATH=/ros2_ws/.ros/rosdep_cache
-#RUN mkdir -p $ROSDEP_SOURCES_LIST $ROSDEP_CACHE
-#RUN curl https://raw.githubusercontent.com/ros/rosdistro/master/rosdep/sources.list.d/20-default.list -o $ROSDEP_SOURCES_LIST/20-default.list
-
 
 USER root
 
@@ -74,17 +68,11 @@ USER rosuser
 COPY --chown=rosuser:rosuser files/Makefile /ros2_ws/Makefile
 COPY --chown=rosuser:rosuser files/ros2_debian_packager.sh /ros2_ws/ros2_debian_packager.sh
 
-#RUN rosdep init && rosdep update && rosdep install --from-paths src --ignore-src -r -y
+USER root
+RUN chown rosuser:rosuser /ros2_ws -R
 
-#RUN mkdir -p /ros2_ws/.ros && \
-#    curl -o $ROS_INDEX_DIR/index-v4.yaml https://raw.githubusercontent.com/ros/rosdistro/master/index-v4.yaml
-
-#ENV ROS_INDEX_URL=file:///ros2_ws/.ros/index-v4.yaml
-
-#RUN mkdir -p /ros2_ws/log /ros2_ws/build
-
+USER rosuser
 WORKDIR /ros2_ws
 
-# Set the entrypoint to keep the container running
 CMD ["/bin/bash"]
 
