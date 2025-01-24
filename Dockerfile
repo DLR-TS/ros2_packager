@@ -39,6 +39,15 @@ RUN useradd --create-home ${USER}
 RUN cat /etc/passwd && usermod -u ${UID} ${USER} && groupmod -g ${GID} ${USER}
 RUN chown -R ${UID}:${GID} /home/${USER} || true
 
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    apt-get update && \
+    find /ros2_ws/src -name 'requirements.system' -type f | while read -r file; do \
+        apt-get install --no-install-recommends -y $(sed '/^#/d' "$file" | sed '/^$/d'); \
+    done && \
+    rm -rf /var/lib/apt/lists/*
+
 
 USER rosuser
 WORKDIR /ros2_ws

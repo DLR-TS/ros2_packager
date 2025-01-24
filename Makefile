@@ -10,11 +10,13 @@ MAKEFLAGS += --no-print-directory
 DOCKER_BUILDKIT?=1
 DOCKER_CONFIG?=
 
-USER := $(shell whoami)
-UID := $(shell id -u)
-GID := $(shell id -g)
+USER:=$(shell whoami)
+UID:=$(shell id -u)
+GID:=$(shell id -g)
 
-ARCHS := amd64 arm64
+ARCHS:=amd64 arm64
+ROS_DISTRO:=jazzy
+OS_CODE_NAME:=noble
 
 .PHONY: help
 help:
@@ -63,7 +65,14 @@ docker_build: clean ## Build multi-architecture Docker images for ROS2 Debian Pa
 	docker buildx create --name multiarch-builder --use --bootstrap || true
 	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 	for ARCH in $(ARCHS); do \
-        docker buildx build --load --platform linux/$$ARCH -t $(DOCKER_ROS2_BUILDER_PACKAGER_IMAGE):$$ARCH \
-        --build-arg UID=${UID} --build-arg GID=${GID} -f Dockerfile . || exit 1; \
+        docker buildx build \
+            --load \
+            --platform linux/$$ARCH \
+            -t $(DOCKER_ROS2_BUILDER_PACKAGER_IMAGE):$$ARCH \
+            --build-arg UID=${UID} \
+            --build-arg GID=${GID} \
+            --build-arg ROS_DISTRO=${ROS_DISTRO} \
+            --build-arg OS_CODE_NAME=${OS_CODE_NAME} \
+            -f Dockerfile . || exit 1; \
     done
 

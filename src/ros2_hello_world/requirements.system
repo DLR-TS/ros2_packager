@@ -1,0 +1,25 @@
+# requirements.system
+# 
+# This file lists the system-level package dependencies required for the package.
+# These packages will be automatically installed in the Docker context using 
+# APT (Advanced Package Tool). 
+#
+#
+# Usage:
+# - To install these dependencies manually, run:
+#     sudo apt-get update && sudo apt-get install --no-install-recommends -y $(grep -vE '^\s*#' requirements.system)
+#
+# File Format:
+# - Each line specifies a package name that can be installed via APT.
+# - Lines beginning with '#' are comments and are ignored.
+# - Empty lines are ignored.
+#
+# Example:
+#   # Essential build tools
+#   build-essential
+#   cmake
+#
+#   # ROS-related dependencies
+#   libboost-all-dev
+#   libeigen3-dev
+cowsay
